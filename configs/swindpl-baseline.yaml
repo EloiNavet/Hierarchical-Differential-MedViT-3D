@@ -1,0 +1,17 @@
+# SwinDPL baseline
+ARCHITECTURE:
+  value: "SwinDPL"
+
+USE_RELATIVE_POS_BIAS:
+  value: True
+USE_ROPE:
+  value: False
+
+USE_DIFF_ATTN:
+  value: False
+
+BATCH_SIZE:
+  value: 6
+
+PRELOAD_DATA:
+  value: False

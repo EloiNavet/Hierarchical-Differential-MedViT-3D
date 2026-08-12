@@ -1,0 +1,23 @@
+# MedViT baseline
+ARCHITECTURE:
+  value: "MedViT"
+
+BATCH_SIZE:
+  value: 10
+
+STOCHASTIC_DEPTH_PROB:
+  value: 0.1
+
+GRADIENT_CLIP:
+  value: False
+
+USE_ROPE:
+  value: False
+USE_RELATIVE_POS_BIAS:
+  value: True
+
+USE_DIFF_ATTN:
+  value: False
+
+PRELOAD_DATA:
+  value: False

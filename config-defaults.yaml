@@ -1,0 +1,285 @@
+# ================================================================
+# MODEL CONFIGURATION
+# ================================================================
+ARCHITECTURE:
+  desc: Model architecture to use (MedViT, ResNet, SwinDPL).
+  value: "MedViT"
+
+IN_CHANNELS:
+  desc: Number of input channels (1 for T1 only, 2 for T1+segmentation multimodal).
+  value: 1
+
+IMG_SIZE:
+  desc: Input image resolution dimensions [height, width, depth].
+  value: [144, 168, 144]
+
+RESHAPE_SIZE:
+  desc: Reshape input volumes before patching [height, width, depth] (False to disable).
+  value: False
+
+PATCH_SHAPE:
+  desc: Patch dimensions for tokenization [height, width, depth].
+  value: [4, 4, 4]
+
+EMBED_DIM:
+  desc: Embedding dimension for the transformer.
+  value: 96
+
+DEPTH:
+  desc: Number of transformer blocks in each stage.
+  value: [2, 2, 6, 2]
+
+HEADS:
+  desc: Number of attention heads in each stage.
+  value: [4, 8, 16, 32]
+
+WINDOW_SIZE:
+  desc: Size of attention windows [height, width, depth].
+  value: [6, 7, 6]
+
+MLP_RATIO:
+  desc: MLP hidden dim / embedding dim ratio.
+  value: 4
+
+QKV_BIAS:
+  desc: Whether to use bias for QKV projections.
+  value: True
+
+PATCH_NORM:
+  desc: Whether to use normalization after patch embedding.
+  value: True
+
+NORM_LAYER:
+  desc: Type of normalization layer.
+  value: "nn.LayerNorm"
+
+USE_CHECKPOINT:
+  desc: Use gradient checkpointing to save memory.
+  value: False
+
+USE_RELATIVE_POS_BIAS:
+  desc: Use traditional relative position bias tables in attention modules.
+  value: True
+
+USE_ROPE:
+  desc: Use Rotary Position Embeddings instead of relative position bias.
+  value: False
+
+# ================================================================
+# REGULARIZATION & DROPOUT
+# ================================================================
+DROPOUT:
+  desc: Dropout rate for embeddings.
+  value: 0
+
+ATTENTION_DROPOUT:
+  desc: Dropout rate for attention.
+  value: 0
+
+STOCHASTIC_DEPTH_PROB:
+  desc: Stochastic depth (DropPath) rate.
+  value: 0.15
+
+# ================================================================
+# DIFFERENTIAL ATTENTION (Ye et al., 2024)
+# ================================================================
+USE_DIFF_ATTN:
+  desc: Enable Differential Attention in attention modules. Reduces attention noise by computing the difference of two softmax attention distributions. See https://arxiv.org/abs/2410.05258
+  value: False
+
+# ================================================================
+# TRAINING CONFIGURATION
+# ================================================================
+SEED:
+  desc: Global seed for full training reproducibility across Python, NumPy, PyTorch, and data loading (set to False to disable).
+  value: False
+
+BATCH_SIZE:
+  desc: Number of samples per batch per GPU (46GB of VRAM SwinDPL=20, MedViT=64).
+  value: 32
+
+EFFECTIVE_BATCH_SIZE:
+  desc: Desired effective batch size across GPUs and gradient accumulation.
+  value: 128
+
+STEPS:
+  desc: Total number of training steps.
+  value: 2750
+
+# --- Learning Rate ---
+LR_BASE:
+  desc: Initial learning rate.
+  value: 0.0003
+
+LR_FINAL:
+  desc: Final learning rate after scheduler decay.
+  value: 0.00001
+
+LR_WARMUP:
+  desc: Warmup steps for learning rate.
+  value: 50
+
+# --- Weight Decay ---
+WD_BASE:
+  desc: Initial weight decay.
+  value: 0.05
+
+WD_FINAL:
+  desc: Final weight decay after scheduler decay.
+  value: 0.0001
+
+WD_WARMUP:
+  desc: Warmup steps for weight decay.
+  value: 50
+
+# --- Precision & Sync ---
+FP16:
+  desc: Use mixed precision training.
+  value: True
+
+USE_SYNC_BN:
+  desc: Use synchronized BatchNorm (for multi-GPU).
+  value: True
+
+# --- Gradient ---
+GRADIENT_CLIP:
+  desc: Maximum gradient norm (False to disable).
+  value: 1.0
+
+# --- EMA for network weights ---
+USE_EMA:
+  desc: Use EMA of model weights.
+  value: True
+
+EMA_DECAY:
+  desc: EMA decay rate.
+  value: 0.999
+
+EMA_N_MODELS:
+  desc: Number of models to keep in EMA ensemble.
+  value: 3
+
+UPDATE_BN_STATS:
+  desc: Update BN stats for EMA model.
+  value: True
+
+# ================================================================
+# MODEL SAVING & EARLY STOPPING
+# ================================================================
+KEEP_BEST_N:
+  desc: Number of best models to keep (False = single best).
+  value: 10
+
+METRIC_BEST_MODEL:
+  desc: Metric to use for selecting best models ('loss', 'acc', 'bacc', 'mcc', 'roc_auc', 'pr_auc', 'macro_f1'). For 'loss', lower is better; for others, higher is better.
+  value: "loss"
+
+SAVE_EVERY:
+  desc: Save model every N steps (False to disable periodic saving).
+  value: False
+
+VALIDATION_FREQUENCY:
+  desc: Frequency (in steps) for validation.
+  value: 5
+
+EARLY_STOPPING_PATIENCE:
+  desc: Number of steps without improvement before stopping (False to disable).
+  value: False
+
+EARLY_STOPPING_METRIC:
+  desc: Metric to monitor for early stopping ('loss', 'acc', 'bacc', 'mcc', 'roc_auc', 'pr_auc', 'macro_f1').
+  value: "loss"
+
+EARLY_STOPPING_MIN_DELTA:
+  desc: Minimum improvement in monitored metric to qualify as an improvement (absolute value).
+  value: 0.0005
+
+# ================================================================
+# DATA & CROSS-VALIDATION
+# ================================================================
+KFOLD:
+  desc: Number of folds.
+  value: 10
+
+FOLD:
+  desc: Current fold (0-indexed).
+  value: 0
+
+SPLIT:
+  desc: Train/val/test ratio. Must sum to KFOLD.
+  value: [7, 2, 1]
+
+DISEASES:
+  desc: Disease classes accronyms.
+  value: ["CN", "AD", "DLB", "SD", "PSP", "BV", "PNFA"]
+
+# ================================================================
+# DATA AUGMENTATION
+# ================================================================
+USE_EXTENDED_DATA_AUGMENTATION:
+  desc: Use extended data augmentation (True) or minimal (False).
+  value: True
+
+USE_MIXUP:
+  desc: Use MRIMixUp augmentation.
+  value: True
+
+MIXUP_ALPHA:
+  desc: Alpha parameter for Beta distribution in MixUp.
+  value: 0.3
+
+MIXUP_PROB:
+  desc: Probability of applying MixUp.
+  value: 0.7
+
+# ================================================================
+# LABEL SMOOTHING
+# ================================================================
+LABEL_SMOOTHING:
+  desc: Label smoothing factor in [0, 1) or False to disable. Redistributes probability mass from target class to all classes uniformly, preventing overconfident predictions. Typical values are 0.1-0.2. Compatible with MixUp and soft targets.
+  value: 0.1
+
+# ================================================================
+# LOSS FUNCTION
+# ================================================================
+LOSS:
+  desc: Loss function to use ('cross_entropy' for LabelSmoothingLoss, 'hierarchical_risk_aware' for HierarchicalRiskAwareLoss).
+  value: "cross_entropy"
+
+HIERARCHY_MAP:
+  desc: Mapping from fine class indices to coarse class indices for hierarchical loss. Keys are fine class indices (matching DISEASES order), values are coarse group indices. Example groups healthy (0) vs disease patterns (1, 2).
+  value:
+    0: 0 # CN   -> Healthy (Group 0)
+    1: 1 # AD   -> Diffuse/Posterior atrophy (Group 1)
+    2: 1 # DLB  -> Diffuse/Posterior atrophy (Group 1, aided by AD)
+    3: 2 # SD   -> Lobar atrophy / FTD (Group 2)
+    4: 1 # PSP  -> Diffuse/Posterior atrophy (Group 1, atypical/subcortical)
+    5: 2 # BV   -> Lobar atrophy / FTD (Group 2)
+    6: 2 # PNFA -> Lobar atrophy / FTD (Group 2)
+
+HIERARCHICAL_ALPHA:
+  desc: Weight for coarse (hierarchical) loss component in HierarchicalRiskAwareLoss. Higher values emphasize correct high-level classification (Healthy vs Disease groups).
+  value: 2.0
+
+HIERARCHICAL_GAMMA:
+  desc: Focal loss gamma parameter for hierarchical component. Higher values increase focus on hard-to-classify examples at the coarse level.
+  value: 2.0
+
+# ================================================================
+# DATA LOADING & PERFORMANCE OPTIMIZATION
+# ================================================================
+USE_BALANCED_SAMPLER:
+  desc: Use balanced sampler to address class imbalance (samples according to inverse class frequency).
+  value: True
+
+PRELOAD_DATA:
+  desc: Preload entire dataset into memory (only for small datasets).
+  value: True
+
+NUM_WORKERS:
+  desc: Number of dataloader workers.
+  value: 10
+
+PREFETCH_FACTOR:
+  desc: Number of batches to prefetch per worker (higher = more memory but better throughput).
+  value: 8

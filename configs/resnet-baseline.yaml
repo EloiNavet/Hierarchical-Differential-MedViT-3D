@@ -1,0 +1,9 @@
+ARCHITECTURE:
+  value: "ResNet"
+
+BATCH_SIZE:
+  desc: Number of samples per batch per GPU (46GB of VRAM SwinV1=24, SwinV1DPL=20, SwinV2=12, MedViTV1=20, MedViTV2=64, Primus=20, ViT=80).
+  value: 16
+
+PRELOAD_DATA:
+  value: False

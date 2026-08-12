@@ -1,0 +1,23 @@
+# MedViT + RoPE + Differential Attention
+ARCHITECTURE:
+  value: "MedViT"
+
+BATCH_SIZE:
+  value: 6
+
+STOCHASTIC_DEPTH_PROB:
+  value: 0.1
+
+GRADIENT_CLIP:
+  value: False
+
+USE_ROPE:
+  value: True
+USE_RELATIVE_POS_BIAS:
+  value: False
+
+USE_DIFF_ATTN:
+  value: True
+
+PRELOAD_DATA:
+  value: False
